@@ -8,11 +8,11 @@ import './App.css';
 
 function App() {
     const appRoutes = useRoutes(routes);
-  return (
-      <ThemeProvider theme={DefaultTheme}>
-          {appRoutes}
-      </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={DefaultTheme}>
+            {appRoutes}
+        </ThemeProvider>
+    );
 }
 
 export default App;
