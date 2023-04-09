@@ -15,6 +15,8 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import Button from "@mui/material/Button";
 
 import './wall.scss';
+import Toolbar from "@mui/material/Toolbar";
+import Box from "@mui/material/Box";
 
 
 const x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -24,6 +26,9 @@ const Wall = () => {
         <Layout>
             <section id={'wall-bg'}>
 
+                <Box sx={{textAlign: 'center'}}>
+                    <Button variant="contained" sx={{width: '56%', marginTop: '10px', color: 'white'}}>Create a post</Button>
+                </Box>
 
                 {
                     x.map(r =>
