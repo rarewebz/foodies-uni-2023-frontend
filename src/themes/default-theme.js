@@ -13,7 +13,7 @@ main-gray: #edf2ff
 const DefaultTheme = createTheme({
     palette: {
         primary: {
-            main: '#83a31a',
+            main: '#4caf50',
         },
         secondary: {
             main: '#FFDC2A',
