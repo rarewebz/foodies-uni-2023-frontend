@@ -6,6 +6,7 @@ colors
 main-green: #83a31a
 main-yellow: #FFDC2A
 secondary-green: #b9db2f
+main-gray: #edf2ff
 
 */
 
@@ -40,7 +41,7 @@ const DefaultTheme = createTheme({
         MuiTextField: {
             styleOverrides: {
                 colorPrimary: {
-                    backgroundColor: colors.secondary,
+                    backgroundColor: '#edf2ff',
                 }
             }
         }
