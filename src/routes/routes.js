@@ -7,6 +7,10 @@ import Wall from "../pages/wall/wall";
 
 export const routes = [
     {
+        path: "/",
+        element: <Wall/>,
+    },
+    {
         path: "/login",
         element: <Login/>,
     },
