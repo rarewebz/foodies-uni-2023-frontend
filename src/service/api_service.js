@@ -45,60 +45,12 @@ export const callApi = async (apiObject) => {
                             detail: ""
                         }
                     }
-                } else if (error.response.status === 401) {
-
-                    if (apiObject.state === "renewToken") {
-                        result = await {
-                            success: false,
-                            status: 2,
-                            message: error.response.data.message,
-                            data: error.response.data
-                        }
-                    } else if (apiObject.state === "login") {
-                        result = await {
-                            success: false,
-                            status: 0,
-                            message: error.response.data.message,
-                            data: error.response.data
-                        }
-                    } else {
-                        result = await {
-                            success: false,
-                            status: 0,
-                            message: error.response.data.error_description,
-                            data: error.response.data
-                        }
-                    }
-
-                } else if (error.response.status === 403) {
-                    result = await {
-                        success: false,
-                        status: 2,
-                        message: "Access is denied.",
-                        data: {
-                            title: "Access is denied.",
-                            detail: ""
-                        }
-                    }
-                } else if (error.response.status === 417 || error.response.status === 404) {
-                    result = await {
-                        success: false,
-                        status: 0,
-                        message: "Oops! Something went wrong.",
-                        data: {
-                            title: "Oops! Something went wrong.",
-                            detail: ""
-                        }
-                    }
                 } else {
                     result = await {
                         success: false,
-                        status: 2,
-                        message: "Sorry, something went wrong.",
-                        data: {
-                            title: "Sorry, something went wrong.",
-                            detail: ""
-                        }
+                        status: 0,
+                        message: error.response.data.message,
+                        data: error.response.data
                     }
                 }
             } else {

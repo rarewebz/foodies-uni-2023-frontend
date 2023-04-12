@@ -14,11 +14,14 @@ import Button from "@mui/material/Button";
 import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/Menu';
 import Logo from "../assets/logo.png";
+import {useNavigate} from "react-router-dom";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Create a post', 'Logout'];
 
 const Header = () => {
+
+    const navigate = useNavigate();
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -81,7 +84,7 @@ const Header = () => {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={() => {setting==="Profile"?navigate("/profile"):setting===""?navigate("/post-management"):navigate("/login")}}>
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}

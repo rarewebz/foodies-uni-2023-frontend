@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Layout from "../../layout/layout";
 import {Carousel} from "react-responsive-carousel";
 import CardMedia from "@mui/material/CardMedia";
@@ -13,139 +13,173 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import SendIcon from '@mui/icons-material/Send';
 import User from "../../assets/user.png";
+import {useNavigate} from "react-router-dom";
+import Cookies from "js-cookie";
+import * as Api from "../../service/apis";
+import swal from "sweetalert";
 
 const Post = () => {
 
-    return(
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(document.location.search)
+
+    const [userId, setUserId] = useState(0);
+    const [post, setPost] = useState(null);
+    const [postId, setPostId] = useState(null);
+
+    const [comment, setComment] = useState("");
+    const [comments, setComments] = useState([]);
+
+    useEffect(() => {
+
+        console.log("Cookies: ", (Cookies.get("foodies_user_id")));
+
+        if (!Cookies.get("foodies_user_id")) navigate("/login");
+        setUserId(Number(Cookies.get("foodies_user_id")));
+
+        if (searchParams.get('id')) {
+            setPostId(searchParams.get('id'));
+        } else {
+            navigate("/")
+        }
+    }, [])
+
+    useEffect(() => {
+        loadPost();
+        getComments();
+    }, [postId])
+
+    const loadPost = () => {
+        Api.getPostsByPostId(postId).then(r => {
+            if (r.success) {
+                setPost(r.data.body);
+            } else {
+                swal("Sorry!", r.data.msg, "error");
+            }
+        });
+    }
+
+    const like = (postId) => {
+        Api.manageLikes(postId, userId).then(r => {
+            if (r.success) {
+                loadPost();
+            } else {
+                swal("Sorry!", r.data.msg, "error");
+            }
+        });
+    }
+
+    const getComments = () => {
+        Api.getCommentsByPostId(postId).then(r => {
+            if (r.success) {
+                setComments(r.data.body);
+            } else {
+                swal("Sorry!", r.data.msg, "error");
+            }
+        });
+    }
+
+    const sendComment = () => {
+        if (comment) {
+            let body = {
+                postId: postId,
+                userId: userId,
+                comment: comment
+            }
+            Api.addComment(body).then(r => {
+                if (r.success) {
+                    loadPost();
+                    getComments();
+                    setComment("");
+                } else {
+                    swal("Sorry!", r.data.msg, "error");
+                }
+            });
+        } else {
+            swal("Invalid Input", "Please enter valid comment", "error");
+        }
+    }
+
+    return (
         <Layout>
-            <section id={"post-bg"}>
+            {
+                post &&
+                <section id={"post-bg"}>
                     <Carousel>
-                        <CardMedia
-                            component="img"
-                            alt="green iguana"
-                            height="600"
-                            image="https://image-processor-storage.s3.us-west-2.amazonaws.com/images/3cf61c1011912a2173ea4dfa260f1108/halo-of-neon-ring-illuminated-in-the-stunning-landscape-of-yosemite.jpg"
-                        />
-                        <CardMedia
-                            component="img"
-                            alt="green iguana"
-                            height="600"
-                            image="https://image-processor-storage.s3.us-west-2.amazonaws.com/images/3cf61c1011912a2173ea4dfa260f1108/halo-of-neon-ring-illuminated-in-the-stunning-landscape-of-yosemite.jpg"
-                        />
-                        <CardMedia
-                            component="img"
-                            alt="green iguana"
-                            height="600"
-                            image="https://image-processor-storage.s3.us-west-2.amazonaws.com/images/3cf61c1011912a2173ea4dfa260f1108/halo-of-neon-ring-illuminated-in-the-stunning-landscape-of-yosemite.jpg"
-                        />
-                        <CardMedia
-                            component="img"
-                            alt="green iguana"
-                            height="600"
-                            image="https://image-processor-storage.s3.us-west-2.amazonaws.com/images/3cf61c1011912a2173ea4dfa260f1108/halo-of-neon-ring-illuminated-in-the-stunning-landscape-of-yosemite.jpg"
-                        />
+                        {
+                            post.images.map(img => <CardMedia
+                                component="img"
+                                alt="green iguana"
+                                height="340"
+                                image={img}
+                            />)
+                        }
                     </Carousel>
 
-                    <h1>Best Cake in the world</h1>
+                    <h1>{post.title}</h1>
 
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto beatae esse molestiae neque perferendis quo reiciendis, tempore unde ut vitae! Alias aperiam corporis ducimus facere iure molestiae neque provident ullam?
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto beatae esse molestiae neque perferendis quo reiciendis, tempore unde ut vitae! Alias aperiam corporis ducimus facere iure molestiae neque provident ullam?
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto beatae esse molestiae neque perferendis quo reiciendis, tempore unde ut vitae! Alias aperiam corporis ducimus facere iure molestiae neque provident ullam?
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto beatae esse molestiae neque perferendis quo reiciendis, tempore unde ut vitae! Alias aperiam corporis ducimus facere iure molestiae neque provident ullam?
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto beatae esse molestiae neque perferendis quo reiciendis, tempore unde ut vitae! Alias aperiam corporis ducimus facere iure molestiae neque provident ullam?
+                        post.description
                     </p>
 
-                <div>
-
-                    <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                        <span className={'react-counts'}>20</span>
-                    </IconButton>
-                    <IconButton aria-label="add to favorites">
-                        <ChatBubbleIcon />
-                        <span className={'react-counts'}>99+</span>
-                    </IconButton>
-
-                </div>
-
-                <div id={'comment'}>
-
                     <div>
-                        <div style={{marginBottom: '15px'}}>Add your comment here.</div>
-                        <TextField
-                            label="Comment"
-                            id="outlined-size-small"
-                            size="small"
-                            multiline
-                            rows={4}
-                            className={"text-fields"}
-                        />
-                        <Box component="div" sx={{width: "100%", textAlign: 'end'}}>
-                            <Button variant="contained" sx={{marginTop: '10px'}} endIcon={<SendIcon />}>
-                                Send
-                            </Button>
-                        </Box>
+
+                        <IconButton aria-label="add to favorites">
+                            <FavoriteIcon/>
+                            <span className={'react-counts'} onClick={() => like(post.id)}>{post.likes}</span>
+                        </IconButton>
+                        <IconButton aria-label="add to favorites">
+                            <ChatBubbleIcon/>
+                            <span className={'react-counts'}>{post.comments}</span>
+                        </IconButton>
 
                     </div>
 
-                    <div>
+                    <div id={'comment'}>
 
-                        <div className={'post-comment'}>
-                            <div className={'post-comment-user'}>
-                                <img src={User}title="user" alt="user.png" width={50}/>
-                                <h4>Andrew Tate</h4>
-                            </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aspernatur autem beatae consequatur corporis cumque exercitationem facilis impedit inventore labore nemo nostrum numquam officiis perspiciatis provident quae quam repudiandae, sed.
-                            </p>
+                        <div>
+                            <div style={{marginBottom: '15px'}}>Add your comment here.</div>
+                            <TextField
+                                label="Comment"
+                                id="outlined-size-small"
+                                size="small"
+                                multiline
+                                rows={4}
+                                className={"text-fields"}
+                                value={comment}
+                                onChange={e => setComment(e.target.value)}
+                            />
+                            <Box component="div" sx={{width: "100%", textAlign: 'end'}}>
+                                <Button variant="contained" sx={{marginTop: '10px'}} endIcon={<SendIcon/>}
+                                        onClick={sendComment}>
+                                    Send
+                                </Button>
+                            </Box>
+
                         </div>
 
-                        <div className={'post-comment'}>
-                            <div className={'post-comment-user'}>
-                                <img src={User}title="user" alt="user.png" width={50}/>
-                                <h4>Andrew Tate</h4>
-                            </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aspernatur autem beatae consequatur corporis cumque exercitationem facilis impedit inventore labore nemo nostrum numquam officiis perspiciatis provident quae quam repudiandae, sed.
-                            </p>
-                        </div>
+                        <div>
 
-                        <div className={'post-comment'}>
-                            <div className={'post-comment-user'}>
-                                <img src={User}title="user" alt="user.png" width={50}/>
-                                <h4>Andrew Tate</h4>
-                            </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aspernatur autem beatae consequatur corporis cumque exercitationem facilis impedit inventore labore nemo nostrum numquam officiis perspiciatis provident quae quam repudiandae, sed.
-                            </p>
-                        </div>
+                            {
+                                comments.map(r => <div className={'post-comment'}>
+                                    <div className={'post-comment-user'}>
+                                        <img src={User} title="user" alt="user.png" width={50}/>
+                                        <h4>{r.user.firstName + " " + r.user.lastName}</h4>
+                                    </div>
+                                    <p>
+                                        {
+                                            r.comment
+                                        }
+                                    </p>
+                                </div>)
+                            }
 
-                        <div className={'post-comment'}>
-                            <div className={'post-comment-user'}>
-                                <img src={User}title="user" alt="user.png" width={50}/>
-                                <h4>Andrew Tate</h4>
-                            </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aspernatur autem beatae consequatur corporis cumque exercitationem facilis impedit inventore labore nemo nostrum numquam officiis perspiciatis provident quae quam repudiandae, sed.
-                            </p>
-                        </div>
-
-                        <div className={'post-comment'}>
-                            <div className={'post-comment-user'}>
-                                <img src={User}title="user" alt="user.png" width={50}/>
-                                <h4>Andrew Tate</h4>
-                            </div>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid aspernatur autem beatae consequatur corporis cumque exercitationem facilis impedit inventore labore nemo nostrum numquam officiis perspiciatis provident quae quam repudiandae, sed.
-                            </p>
                         </div>
 
                     </div>
 
-                </div>
-
-            </section>
+                </section>
+            }
         </Layout>
     )
 
