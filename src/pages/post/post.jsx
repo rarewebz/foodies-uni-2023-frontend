@@ -102,6 +102,35 @@ const Post = () => {
         }
     }
 
+    const deletePost = () => {
+
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure to delete this post",
+            icon: "warning",
+            dangerMode: true,
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
+            confirmButtonText:
+                'Ok',
+            cancelButtonText:
+                'No'
+        })
+            .then(willDelete => {
+                if (willDelete) {
+                    Api.deletePost(postId).then(r => {
+                        if (r.success) {
+                            swal("Success!", r.data.msg, "success");
+                            navigate(-1);
+                        } else {
+                            swal("Sorry!", r.data.msg, "error");
+                        }
+                    });
+                }
+            });
+    }
+
     return (
         <Layout>
             {
@@ -111,7 +140,7 @@ const Post = () => {
                         userId===post.user.id && <div style={{textAlign: "right"}}>
                             <IconButton aria-label="add to favorites" style={{color:"red"}}>
                                 <DeleteForeverIcon/>
-                                <span className={'react-counts'} onClick={() => like(post.id)}>Delete this post</span>
+                                <span className={'react-counts'} onClick={deletePost}>Delete this post</span>
                             </IconButton>
                             <IconButton aria-label="add to favorites">
                                 <EditIcon/>

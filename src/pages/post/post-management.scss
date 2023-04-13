@@ -2,6 +2,7 @@
   .image-uploader {
     width: fit-content;
     margin: auto;
+    display: flex;
     label {
       width: 100px;
       height: 100px;
@@ -23,5 +24,21 @@
       color: white;
       font-weight: bold;
     }
+  }
+}
+
+#image-uploader-set1 {
+  display: block;
+}
+#image-uploader-set2 {
+  display: none;
+}
+
+@media all and (max-width: 680px) {
+  #image-uploader-set1 {
+    display: none;
+  }
+  #image-uploader-set2 {
+    display: block;
   }
 }

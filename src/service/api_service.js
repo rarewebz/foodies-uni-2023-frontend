@@ -14,6 +14,7 @@ export const callApi = async (apiObject) => {
 
             }
         } else if (apiObject.state === "form") {
+            console.log("XXXXXXXXXXXXXXXX")
             headers = {
                 'Content-Type': 'multipart/form-data',
             }
