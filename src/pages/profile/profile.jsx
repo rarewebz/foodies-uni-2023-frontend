@@ -72,7 +72,7 @@ const Profile = () => {
                 </div>
 
                 <div id={'profile-post-btn'}>
-                    <Button variant="contained">Create a post</Button>
+                    <Button variant="contained" onClick={()=>navigate("/post-management")}>Create a post</Button>
                 </div>
 
                 <div id={'profile-post-grid'}>

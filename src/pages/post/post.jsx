@@ -17,6 +17,8 @@ import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
 import * as Api from "../../service/apis";
 import swal from "sweetalert";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const Post = () => {
 
@@ -105,6 +107,19 @@ const Post = () => {
             {
                 post &&
                 <section id={"post-bg"}>
+                    {
+                        userId===post.user.id && <div style={{textAlign: "right"}}>
+                            <IconButton aria-label="add to favorites" style={{color:"red"}}>
+                                <DeleteForeverIcon/>
+                                <span className={'react-counts'} onClick={() => like(post.id)}>Delete this post</span>
+                            </IconButton>
+                            <IconButton aria-label="add to favorites">
+                                <EditIcon/>
+                                <span className={'react-counts'} onClick={() => like(post.id)}>Edit this post</span>
+                            </IconButton>
+                        </div>
+                    }
+
                     <Carousel>
                         {
                             post.images.map(img => <CardMedia

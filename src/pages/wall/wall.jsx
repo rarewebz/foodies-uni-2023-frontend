@@ -31,22 +31,22 @@ const Wall = () => {
     const [userId, setUserId] = useState(0);
     const [posts, setPosts] = useState([]);
 
-    useEffect(()=>{
-        if(searchParams.get('id')) {
+    useEffect(() => {
+        if (searchParams.get('id')) {
             setUserId(searchParams.get('id'));
         } else {
-            if(!Cookies.get("foodies_user_id")) navigate("/login");
+            if (!Cookies.get("foodies_user_id")) navigate("/login");
             setUserId(Number(Cookies.get("foodies_user_id")));
         }
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         loadPosts();
     }, [userId])
 
     const loadPosts = () => {
         Api.getAllPosts().then(r => {
-            if(r.success) {
+            if (r.success) {
                 setPosts(r.data.body);
             } else {
                 swal("Sorry!", r.data.msg, "error");
@@ -56,7 +56,7 @@ const Wall = () => {
 
     const like = (postId) => {
         Api.manageLikes(postId, userId).then(r => {
-            if(r.success) {
+            if (r.success) {
                 loadPosts();
             } else {
                 swal("Sorry!", r.data.msg, "error");
@@ -64,20 +64,21 @@ const Wall = () => {
         });
     }
 
-    return(
+    return (
         <Layout>
             <section id={'wall-bg'}>
 
                 <Box sx={{textAlign: 'center'}}>
-                    <Button variant="contained" sx={{width: '56%', marginTop: '10px', color: 'white'}}>Create a post</Button>
+                    <Button variant="contained" sx={{width: '56%', marginTop: '10px', color: 'white'}}
+                            onClick={() => navigate("/post-management")}>Create a post</Button>
                 </Box>
 
                 {
                     posts.map(r =>
-                        <Card sx={{ maxWidth: 600 }} className={'wall-card'}>
+                        <Card sx={{maxWidth: 600}} className={'wall-card'}>
                             <CardHeader
                                 avatar={
-                                    <img src={User}title="user" alt="user.png" width={50}/>
+                                    <img src={User} title="user" alt="user.png" width={50}/>
                                 }
                                 title={r.user.firstName + " " + r.user.lastName}
                                 subheader={r.date}
@@ -103,15 +104,16 @@ const Wall = () => {
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
-                                <IconButton aria-label="add to favorites" onClick={()=>like(r.id)}>
-                                    <FavoriteIcon />
+                                <IconButton aria-label="add to favorites" onClick={() => like(r.id)}>
+                                    <FavoriteIcon/>
                                     <span className={'react-counts'}>{r.likes}</span>
                                 </IconButton>
                                 <IconButton aria-label="add to favorites">
-                                    <ChatBubbleIcon />
-                                    <span className={'react-counts'} onClick={()=>navigate(`/post?id=${r.id}`)}>{r.comments}</span>
+                                    <ChatBubbleIcon/>
+                                    <span className={'react-counts'}
+                                          onClick={() => navigate(`/post?id=${r.id}`)}>{r.comments}</span>
                                 </IconButton>
-                                <Button size="small" onClick={()=>navigate(`/post?id=${r.id}`)}>View More</Button>
+                                <Button size="small" onClick={() => navigate(`/post?id=${r.id}`)}>View More</Button>
                             </CardActions>
 
                         </Card>
